@@ -1,0 +1,12 @@
+# Don't include the ExtJS bundle
+html/js/ext*
+html/js/lightbox
+# Git doesn't track directories so to keep an empty directory place a .gitignore
+# in that directory with:
+# *
+# !.gitignore
+
+# Don't include all historical images in the repo.
+html/images/20*
+# Don't put passwords into git
+config/casc.ini

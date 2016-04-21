@@ -1,0 +1,25 @@
+casc image submission application
+----------------------------------
+
+
+Changes as of April 2014:
+
+ - Created new landing page for site
+ - Historical submissions from 2011-2013 can be viewed 
+ - On upload of image, dump_image.php runs to save thumbnail and full-display copies to filesystem.
+     Jeanette Sperhac
+
+A       assets/CHANGELOG.txt
+M       html/submit.php
+A       html/dump_image.php
+M       html/list.php
+M       html/2011_list.php
+M       html/2012_list.php
+A       html/2013_list.php
+A       html/image_submit.html
+M       html/status.php
+M       html/index.html
+A       html/js/main.js
+M       html/js/form.js
+
+----------------------------------
