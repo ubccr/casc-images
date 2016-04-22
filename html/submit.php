@@ -110,7 +110,7 @@ try
   // Call the dump image script with the particulars to create the image files for display.
   $options="-m $memberId -t $dateUploaded -i images/current";
   $dumpscript = "/var/www/scripts/dump_raw_images.php";
-  exec("/usr/bin/php {$dumpscript} {$options} >> /var/www/html/dump.out 2>&1 &");
+  exec("/usr/bin/php {$dumpscript} {$options} >> /tmp/casc_image_dump.out 2>&1 &");
 }
 catch ( PDOException $e )
 {
