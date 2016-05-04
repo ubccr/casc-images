@@ -6,10 +6,12 @@
 
 $filename = NULL;
 $skipLines = 1;
+$truncateTable = FALSE;
 
 $options = array("h"  => "help",
 		 "s:" => "skip:",
-                 "f:" => 'file:');
+                 "f:" => "file:",
+                 "t"  => "truncate");
 
 $args = getopt(implode("", array_keys($options)));  // , $options);
 foreach ( $args as $arg => $value )
@@ -29,6 +31,11 @@ foreach ( $args as $arg => $value )
   case 'h':
   case 'help':
     usage_and_exit();
+    break;
+
+  case 't':
+  case 'truncate':
+    $truncateTable = TRUE;
     break;
 
   default:
@@ -65,6 +72,11 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 $sql = "insert into members (name, organization, city, state) values (:name, :organization, :city, :state)";
 $sth = $dbh->prepare($sql);
+
+if ( $truncateTable ) {
+  $sql = "TRUNCATE TABLE members";
+  $dbh->query($sql);
+}
 
 foreach ( $lines as $line )
 {
