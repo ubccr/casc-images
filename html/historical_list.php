@@ -7,13 +7,13 @@ $year = ( isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : 20
   <style type="text/css">
     img, body, html { border: 0 none; }
     body, html { margin: 0; padding: 0}
-    #wrapper { margin: 5px auto; width: 1000; border: 0px solid black }
+    #wrapper { margin: 5px auto; width: 1100; border: 0px solid black }
     .desc { font-size: x-small; }
     .thumbnail {
         background-color: #eee;
         border: 1px solid #ccc;
-        width: 180px;
-        height: 220px;
+        width: 200px;
+        height: 400px;
         float: left;
         margin-bottom: 10px;
         margin-right: 10px;
@@ -50,12 +50,16 @@ $year = trim($dbh->quote($year), "'");
 
 $query = "
 select 
-    m.organization,
+    m.name as member_name,
+    m.organization as member_org,
     i.researcher_name,
+    i.researcher_institution,
+    i.viz_name,
+    i.viz_institution,
+    i.compute_name,
+    i.compute_institution,
     i.member_id,
     i.description,
-    i.name,
-    i.email,
     unix_timestamp(i.date_uploaded) uploaded
 from {$year}_images i
 join {$year}_members m
@@ -74,7 +78,17 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $thumb = 'images/'.$year.'/180x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
     $full = 'images/'.$year.'/600x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
     echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($row['description']).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc">'.$row['researcher_name'].'<br/>'.$row['organization'].'</p>';
+    echo '<p class="desc">Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
+    if (null != $row['viz_name'] || null != $row['viz_institution']) {
+      echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
+    }
+    if (null != $row['compute_name'] || null != $row['compute_institution']) {
+      echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";
+    }
+    echo '<p class="desc"><b>' . $row['member_name'] . '</b>';
+    if ( ! empty($row['member_org']) ) {
+        echo ' (' . $row['member_org'] . ')';
+    }
     echo '</div>';
 }
 ?>

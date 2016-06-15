@@ -12,8 +12,8 @@ $year = "2016";
     .thumbnail {
         background-color: #eee;
         border: 1px solid #ccc;
-        width: 180px;
-        height: 300px; 
+        width: 200px;
+        height: 400px; 
         float: left;
         margin-bottom: 10px;
         margin-right: 10px;
@@ -54,7 +54,8 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 $query = "
 select 
-    m.organization,
+    m.name as member_name,
+    m.organization as member_org,
     i.researcher_name,
     i.researcher_institution,
     i.viz_name,
@@ -90,7 +91,10 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     if (null != $row['compute_name'] || null != $row['compute_institution']) {
       echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";
     }
-    echo '<p class="desc">'.$row['organization'];
+    echo '<p class="desc"><b>' . $row['member_name'] . '</b>';
+    if ( ! empty($row['member_org']) ) {
+        echo ' (' . $row['member_org'] . ')';
+    }
     echo '</p></div>';
 }
 ?>
