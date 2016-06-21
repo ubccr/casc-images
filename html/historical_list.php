@@ -1,4 +1,7 @@
 <?php
+/*
+ * Note: The researcher_institution field was added in 2014
+*/
 $year = ( isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : 2011 );
 ?>
 <html>
@@ -48,19 +51,26 @@ $dbh = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPasswd);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 $year = trim($dbh->quote($year), "'");
 
-$query = "
-select 
-    m.name as member_name,
-    m.organization as member_org,
-    i.researcher_name,
-    i.researcher_institution,
-    i.viz_name,
-    i.viz_institution,
-    i.compute_name,
-    i.compute_institution,
-    i.member_id,
-    i.description,
-    unix_timestamp(i.date_uploaded) uploaded
+$fields = array(
+	"m.name as member_name",
+	"m.organization as member_org",
+	"i.researcher_name",
+	"i.member_id",
+	"i.description",
+	"unix_timestamp(i.date_uploaded) uploaded");
+
+if ( $year >= 2014 ) {
+	$additionalFields = array(
+		"i.researcher_institution",
+		"i.viz_name",
+		"i.viz_institution",
+		"i.compute_name",
+		"i.compute_institution");
+	$fields = array_merge($fields, $additionalFields);
+}
+
+$query = "select " .
+implode(", ", $fields) . "
 from {$year}_images i
 join {$year}_members m
     on i.member_id = m.member_id
@@ -78,13 +88,12 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $thumb = 'images/'.$year.'/180x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
     $full = 'images/'.$year.'/600x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
     echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($row['description']).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc">Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
-    if (null != $row['viz_name'] || null != $row['viz_institution']) {
+    echo '<p class="desc">Researcher: '.$row['researcher_name'] . ( $year >= 2014 ? '<br/>'.$row['researcher_institution'] : "" );
+    if ( $year >= 2014 ) {
       echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
-    }
-    if (null != $row['compute_name'] || null != $row['compute_institution']) {
       echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";
     }
+    echo '</p>';
     echo '<p class="desc"><b>' . $row['member_name'] . '</b>';
     if ( ! empty($row['member_org']) ) {
         echo ' (' . $row['member_org'] . ')';
