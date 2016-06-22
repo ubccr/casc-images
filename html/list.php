@@ -78,13 +78,14 @@ try {
   exit("<pre>$msg</pre>");
 }
 
+$imageNumber = 1;
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     // grab exported images for display
     $thumb = 'images/current/180x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
     $full = 'images/current/600x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
 
     echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($row['description']).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc">Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
+    echo '<p class="desc">Image #' . $imageNumber++ . '<br/>Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
     if (null != $row['viz_name'] || null != $row['viz_institution']) {
       echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
     }
