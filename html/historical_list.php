@@ -15,7 +15,7 @@ $year = ( isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : 20
     .thumbnail {
         background-color: #eee;
         border: 1px solid #ccc;
-        width: 200px;
+        width: 250px;
         height: 400px;
         float: left;
         margin-bottom: 10px;
