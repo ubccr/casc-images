@@ -1,12 +1,11 @@
 <?php
-
-// Dump uploaded images from the database and convert into the sizes that we will need to display
-// them using Andrew's image viewer.  Images are stored in the casc database in the "images" table
+// Dump uploaded images from the database and convert them into the sizes that we will need to
+// display hem using the lightbox viewer.  Images are stored in the casc database "images" table
 // for the current year and manually renamed to "<year>_images" tables at the start of a new year
 // (e.g., "2013_images").  By default the current "images" table is used but you can specify an
 // alternate year - "2011" for "2011_images" for example.
 //
-// By default images will be processed in an "images" directory local to the working directory
+// By default images will be processed in an "images" directory relative to the working directory
 // unless another directory is specified.  Raw images will be dumped to "images/raw" and converted
 // images will be placed into "images/180x" (preview) and "images/600x" (lightbox viewer) for use
 // with the image viewer page.  Note that currently images for all years are placed in to the same
@@ -18,26 +17,23 @@
 // may need to be copied from the default "images" first.
 
 $options = array("h"  => "help",
-                 // Timestamp
-                 "t:" => 'timestamp:',
                  // Casc member id
-                 "m:" => 'member:',
+                 "m:" => 'member-id:',
+                 // Image id
+                 "i:" => 'image-id:',
                  // Optional image directory
-                 "i:" => 'image-dir:',
+                 "d:" => 'image-dir:',
                  // Optional year
                  "y:" => 'year:');
 
-// Dump a single image rather than an entire year?
-$single_image = false;
+// Image to dump
+$imageId = null;
 
 // CASC member for single images
-$member = null;
-
-// Image timestamp for single images
-$timestamp = null;
+$memberId = null;
 
 // current year unless specified
-$year = "";
+$year = null;
 
 // Base directory for exported images: must be writable by apache
 $imageDir = "./images";
@@ -45,21 +41,19 @@ $imageDir = "./images";
 // By default, process entire year's images
 $single_image = false;
 
-// Supported image types
-$types = array('image/tiff' => 'tiff',
-               'image/jpeg' => 'jpg',
-               'image/pjpeg' => 'jpg',
-               'image/png' => 'png',
-               'image/gif' => 'gif',
-               'image/x-png' => 'png',
-               'image/x-eps' => 'eps');
+$args = getopt(implode("", array_keys($options)), $options);
 
-$args = getopt(implode("", array_keys($options)));  // , $options);
 foreach ( $args as $arg => $value )
 {
   switch ($arg)
   {
   case 'i':
+  case 'image-id':
+    $imageId = trim($value);
+    $single_image = true;
+    break;
+
+  case 'd':
   case 'image-dir':
     $imageDir = trim($value);
     break;
@@ -69,16 +63,9 @@ foreach ( $args as $arg => $value )
     $year = trim($value);
     break;
 
-  case 't':
-  case 'timestamp':
-    $timestamp = trim($value);
-    $single_image = true;
-    break;
-
   case 'm':
-  case 'member':
-    $member = trim($value);
-    $single_image = true;
+  case 'member-id':
+    $memberId = trim($value);
     break;
 
   case 'h':
@@ -91,22 +78,12 @@ foreach ( $args as $arg => $value )
   }
 }  // foreach ( $args as $arg => $value )
 
-print("Timestamp: $timestamp (" . date("Y-m-d H:m:s", $timestamp) . ")\n");
-
-// If a single image to upload, exit unless
-// both member and timestamp were received.
-if (true == $single_image) {
-  if (null == $timestamp || null == $member ){
-    usage_and_exit();
-  }
-}
-
 // Create image directories if they don't already exist
 
 $rawImageDir = $imageDir . "/raw";
 $thumbImageDir = $imageDir . "/180x";
 $fullImageDir = $imageDir . "/600x";
-$tableName = ( "" != $year ? "${year}_" : "" ) . "images";
+$tableName = ( null !== $year ? $year . "_" : "" ) . "images";
 
 if ( ! is_dir($imageDir) ) mkdir($imageDir, 0755);
 if ( ! is_dir($rawImageDir) ) mkdir($rawImageDir, 0755);
@@ -125,46 +102,90 @@ $dbPasswd = $config['database']['password'];
 $dbh = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPasswd);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
+$criteria = array();
+$parameters = array();
+
+if ( null !== $imageId ) {
+  $criteria[] = "image_id = ?";
+  $parameters[] = $imageId;
+}
+if ( null !== $memberId ) {
+  $criteria[] = "memberId = ?";
+  $parameters[] = $memberId;
+}
+
 $query = "
 select
     image_id, member_id, unix_timestamp(date_uploaded) as uploaded,
-    imagetype, image
+    imagetype, image, image_ext
 from $tableName";
 
-if (true == $single_image) {
-    $query .= " where member_id = $member and unix_timestamp(date_uploaded) = $timestamp";
+if ( 0 != count($criteria) ) {
+    $query .= " where " . implode(" and ", $criteria);
 }
 
 try {
   $sth = $dbh->prepare($query);
-  $sth->execute();
+  $sth->execute($parameters);
 } catch (PDOException $e) {
   $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
   exit($msg);
 }
 
-print "\n";
+print "Processing " . $sth->rowCount() . " images\n";
+
+// Save the file names in a list and convert them later. Otherwise, trying to fork the process
+// containing a large result set may fail.
+
+$fileNameList = array();
+
 while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 {
-  $name = $row['member_id'] . "-" . $row['uploaded'];
-  $type = $types[$row['imagetype']];
-  $raw = "{$rawImageDir}/${name}.${type}";
-  print "Save image from database '$raw'\n";
-  if ( FALSE !== file_put_contents($raw, $row['image']) )
-  {
-    $thumbnail = $thumbImageDir . "/${name}.png";
-    $exe = "convert -resize 180x180 $raw $thumbnail && chmod 644 $thumbnail";
-    print "  $exe\n";
-    system($exe);
+  $name = $row['image_id'] . "-" . $row['member_id'] . "-" . $row['uploaded'];
+  $ext = $row['image_ext']; 
+  $rawPath = "{$rawImageDir}/${name}.${ext}";
+  print "Save image from database: $rawPath\n";
 
-    $full = $fullImageDir . "/${name}.png";
-    $exe = "convert -resize 600x $raw $full && chmod 644 $full";
-    print "  $exe\n";
-    system($exe);
+  if ( false === file_put_contents($rawPath, $row['image']) ) {
+    $err = error_get_last();
+    print sprintf("  Error saving image '%s': %s", $name, $err['message']) . "\n";
+    continue;
   }
+
+  if ( false === @chmod($rawPath, 0644) ) {
+    $err = error_get_last();
+    print sprintf("  Error changing permissions on '%s': %s", $rawPath, $err['message']) . "\n";
+    continue;
+  }
+
+  $fileNameList[] = array($name, $rawPath);
+
 }
 
-print("\n");
+// Clean up the database results to free memory before we start forking
+
+$sth->closeCursor();
+$sth = null;
+$dbh = null;
+
+foreach ( $fileNameList as $imageInfo ) {
+  list($name, $rawPath) = $imageInfo;
+  $thumbnail = $thumbImageDir . "/${name}.png";
+
+  // Note the [0] notation for convert, this selects the first frame and is useful when
+  // someone uploads an animated gif.
+
+  $exe = "convert -resize 180x180 {$rawPath}[0] $thumbnail && chmod 644 $thumbnail";
+  print "$name: $exe\n";
+  system($exe);
+
+  $full = $fullImageDir . "/${name}.png";
+  $exe = "convert -resize 600x {$rawPath}[0] $full && chmod 644 $full";
+  print "$name: $exe\n";
+  system($exe);
+}
+
+exit(0);
 
 // --------------------------------------------------------------------------------
 
@@ -175,10 +196,10 @@ function usage_and_exit($msg = NULL)
 
   $str = "Usage: " . $_SERVER['argv'][0] . " \\\n" .
     "[-h | --help] Display this help \n" .
-    "[-i | --image-dir] Base image directory (default: " . $GLOBALS['imageDir'] . ")\n" .
+    "[-i | --image-id] Database image identifier\n" .
+    "[-d | --image-dir] Base image directory (default: " . $GLOBALS['imageDir'] . ")\n" .
     "[-y | --year] Optional year if not the current one\n" . 
-    "[-m | --member] CASC member institution id, if processing a single image\n" .
-    "[-t | --timestamp] UNIX timestamp of image, if processing a single image\n";
+    "[-m | --member-id] CASC member institution id, if processing a single image\n";
   fwrite(STDERR, $str);
   exit(1);
 }  // usage_and_exit()

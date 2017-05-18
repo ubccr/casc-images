@@ -52,25 +52,29 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 $year = trim($dbh->quote($year), "'");
 
 $fields = array(
-	"m.name as member_name",
-	"m.organization as member_org",
-	"i.researcher_name",
-	"i.member_id",
-	"i.description",
-	"unix_timestamp(i.date_uploaded) uploaded");
+  "i.image_id",
+  "m.name as member_name",
+  "m.organization as member_org",
+  "i.researcher_name",
+  "i.member_id",
+  "i.description",
+  "unix_timestamp(i.date_uploaded) uploaded",
+  "i.image_resolution",
+  "i.image_ext"
+);
 
 if ( $year >= 2014 ) {
-	$additionalFields = array(
-		"i.researcher_institution",
-		"i.viz_name",
-		"i.viz_institution",
-		"i.compute_name",
-		"i.compute_institution");
-	$fields = array_merge($fields, $additionalFields);
+  $additionalFields = array(
+    "i.researcher_institution",
+    "i.viz_name",
+    "i.viz_institution",
+    "i.compute_name",
+    "i.compute_institution"
+  );
+  $fields = array_merge($fields, $additionalFields);
 }
 
-$query = "select " .
-implode(", ", $fields) . "
+$query = "select " . implode(", ", $fields) . "
 from {$year}_images i
 join {$year}_members m
     on i.member_id = m.member_id
@@ -85,12 +89,15 @@ try {
   exit("<pre>$msg</pre>");
 }
 
-$imageNumber = 1;
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-    $thumb = 'images/'.$year.'/180x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
-    $full = 'images/'.$year.'/600x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
-    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($row['description']).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc">Image #' . $imageNumber++ . '<br/>Researcher: '.$row['researcher_name'] . ( $year >= 2014 ? '<br/>'.$row['researcher_institution'] : "" );
+    $imageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded'].'.png';
+    $rawImageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.' . $row['image_ext'];
+    $thumb = 'images/' . $year . '/180x/' . $imageName;
+    $full = 'images/' . $year . '/600x/' . $imageName;
+    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/><a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Raw Image</a><br/>';
+
+    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
+    echo '<p class="desc"><b>Image #' . $row['image_id'] . '<b> (' . $row['image_resolution'] . ')<br/><br/>Researcher: '.$row['researcher_name'] . ( $year >= 2014 ? '<br/>'.$row['researcher_institution'] : "" );
     if ( $year >= 2014 ) {
       echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
       echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";

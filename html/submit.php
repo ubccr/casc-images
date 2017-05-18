@@ -1,6 +1,19 @@
 <?php
 
 $response = NULL;
+$imageDirectory = 'images/current';
+$dumpScript = '/var/www/scripts/dump_raw_images.php';
+$logFile = '/tmp/casc_image_dump.out';
+
+$mimeTypeToExtension = array(
+  'image/tiff' => 'tiff',
+  'image/jpeg' => 'jpg',
+  'image/pjpeg' => 'jpg',
+  'image/png' => 'png',
+  'image/gif' => 'gif',
+  'image/x-png' => 'png',
+  'image/x-eps' => 'eps'
+);
 
 // --------------------------------------------------------------------------------
 // Handle errors
@@ -60,6 +73,24 @@ $computeSystem = ( isset($_POST['compute_system']) ? $_POST['compute_system'] : 
 $computeInstitution = ( isset($_POST['compute_institution']) ? $_POST['compute_institution'] : NULL );
 $dateUploaded = exec("date +%s");
 
+// --------------------------------------------------------------------------------
+// Determine image size and mime type
+
+$imageInfo = getimagesize($_FILES['imagefile']['tmp_name']);
+$imageResolution = $imageInfo[0] . 'x' . $imageInfo[1];
+$imageMimeType = (array_key_exists('mime', $imageInfo) && ! empty($imageInfo['mime']) ? $imageInfo['mime'] : $_FILES['imagefile']['type']);
+
+if ( array_key_exists($imageMimeType, $mimeTypeToExtension) ) {
+  $imageExt = $mimeTypeToExtension[$imageMimeType];
+} else {
+  $response = array(
+    'success' => false,
+    'msg'     => "Unsupported image type: '$imageMimeType'"
+  );
+  print json_encode($response);
+  exit();
+}
+
 $config = parse_ini_file("../config/casc.ini", true);
 $dbHost = $config['database']['host'];
 $dbName = $config['database']['name'];
@@ -74,8 +105,8 @@ $sql =
    researcher_name, researcher_phone, researcher_email, researcher_institution,
    researcher_address, viz_name, viz_institution, 
    compute_name, compute_system, compute_institution,
-   date_uploaded, imagetype, image)
-   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, from_unixtime(?), ?, ?)";
+   date_uploaded, imagetype, image_resolution, image_ext, image)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, from_unixtime(?), ?, ?, ?, ?)";
 
 try
 {
@@ -96,29 +127,34 @@ try
   $stmt->bindParam(14, $computeSystem);
   $stmt->bindParam(15, $computeInstitution);
   $stmt->bindParam(16, $dateUploaded);
-  $stmt->bindParam(17, $_FILES['imagefile']['type'] );
+  $stmt->bindParam(17, $imageMimeType);
+  $stmt->bindParam(18, $imageResolution);
+  $stmt->bindParam(19, $imageExt);
   $fp = fopen($_FILES['imagefile']['tmp_name'], 'rb');
-  $stmt->bindParam(18, $fp, PDO::PARAM_LOB);
+  $stmt->bindParam(20, $fp, PDO::PARAM_LOB);
   
   $dbh->beginTransaction();
   $stmt->execute();
+  $imageId = $dbh->lastInsertId();
   $dbh->commit();
   $result = array('success' => true,
                   'msg'     => "Uploaded '" . basename($_FILES['imagefile']['name']) . "' (" .
                   number_format($_FILES['imagefile']['size'], 0) . " bytes)");
 
   // Call the dump image script with the particulars to create the image files for display.
-  $options="-m $memberId -t $dateUploaded -i images/current";
-  $dumpscript = "/var/www/scripts/dump_raw_images.php";
-  exec("/usr/bin/php {$dumpscript} {$options} >> /tmp/casc_image_dump.out 2>&1 &");
+  $options="-i $imageId -d $imageDirectory";
+  $command = "/usr/bin/php {$dumpScript} {$options} >> {$logFile} 2>&1 &";
+  exec("echo '$command' >/tmp/smg");
+  exec($command);
 }
 catch ( PDOException $e )
 {
-  $result = array('success' => false,
-                  'msg'     => "Error uploading '" . basename($_FILES['imagefile']['name']) .
-", size=" . filesize($_FILES['imagefile']['tmp_name']) .
-                  "': " . $e->getMessage());
+  $result = array(
+    'success' => false,
+    'msg'     => "Error uploading '" . basename($_FILES['imagefile']['name']) . ", size=" . filesize($_FILES['imagefile']['tmp_name']) . "': " . $e->getMessage()
+  );
 }
+
 print json_encode($result);
 
 ?>

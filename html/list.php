@@ -1,5 +1,5 @@
 <?php
-$year = "2016";
+$year = "2017";
 ?>
 <html>
 <head>
@@ -12,7 +12,7 @@ $year = "2016";
     .thumbnail {
         background-color: #eee;
         border: 1px solid #ccc;
-        width: 200px;
+        width: 250px;
         height: 400px; 
         float: left;
         margin-bottom: 10px;
@@ -54,6 +54,7 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 $query = "
 select 
+    i.image_id,
     m.name as member_name,
     m.organization as member_org,
     i.researcher_name,
@@ -64,10 +65,13 @@ select
     i.compute_institution,
     i.member_id,
     i.description,
-    unix_timestamp(i.date_uploaded) uploaded
+    unix_timestamp(i.date_uploaded) uploaded,
+    i.image_resolution,
+    i.image_ext
 from images i
 join members m
     on i.member_id = m.member_id
+order by i.date_uploaded asc
 ";
 
 try {
@@ -78,14 +82,16 @@ try {
   exit("<pre>$msg</pre>");
 }
 
-$imageNumber = 1;
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     // grab exported images for display
-    $thumb = 'images/current/180x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
-    $full = 'images/current/600x/'.$row['member_id'].'-'.$row['uploaded'].'.png';
+    $imageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded'].'.png';
+    $rawImageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.' . $row['image_ext'];
+    $thumb = "images/current/180x/$imageName";
+    $full = "images/current/600x/$imageName";
+    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/><a href="download_image.php?year=current&name=' . $rawImageName . '">Download Raw Image</a><br/>';
 
-    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($row['description']).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc">Image #' . $imageNumber++ . '<br/>Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
+    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
+    echo '<p class="desc"><b>Image #' . $row['image_id'] . '</b> (' . $row['image_resolution'] . ')<br/>Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
     if (null != $row['viz_name'] || null != $row['viz_institution']) {
       echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
     }
