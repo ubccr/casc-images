@@ -6,19 +6,22 @@ Operations described here assume the directory is the top level website director
 Helper Scripts
 --------------
 
-The dump\_raw\_images.php script will dump imges from the database into a directory with each image named using the member id and unix timestamp corresponding to the upload date (e.g., 12-1432218737.jpg). Raw images will be exported into the *image_dir*/raw directory and thumbnails for viewing will be generated and placed into the *image_dir*/180x and *image_dir*/600x directories.
+The dump\_raw\_images.php script will dump imges from the database into a directory with each image named using the image id,
+member id, and unix timestamp corresponding to the upload date (e.g., 2-12-1432218737.jpg). Raw images will be exported into
+the *image_dir*/raw directory and thumbnails for viewing will be generated and placed into the *image_dir*/180x and
+*image_dir*/600x directories.
 
 Dump the current images to an archive directory (these can also be copied from the current image directory)
 
-	php ./scripts/dump_raw_images.php -i html/images/2014
+	php ./scripts/dump_raw_images.php -d html/images/2014
 
 Dump images that have already been archived in the database (e.g., into *year*\_images and *year*\_member tables:
 
-	php ./scripts/dump_raw_images.php -i html/images/2011 -y 2011
+	php ./scripts/dump_raw_images.php -d html/images/2011 -y 2011
 
 Dump a specific image (this is used by submit.php)
 
-	php ./scripts/dump_raw_images.php -m 12 -t 1432218737 -i html/images/current;
+	php ./scripts/dump_raw_images.php -i 12 -d html/images/current;
 
 Set Up for a New Year
 ---------------------
@@ -63,12 +66,12 @@ the current year repository.
 	) ENGINE = MyISAM
 	AS SELECT * FROM `casc`.`members`;
 
-	TRUNACE TABLE `casc`.`images`;
+	TRUNACTE TABLE `casc`.`images`;
 	
 (2) Copy images to an archive directory
 
 	mkdir html/images/2015
-	mv -a html/images/current/* html/images/2015
+	mv html/images/current/* html/images/2015
 	
 (2) Add the newly archived year to html/js/main.js
 

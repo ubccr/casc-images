@@ -8,6 +8,7 @@ Ext.onReady(function(){
     var casc_submissions_list = new Ext.data.ArrayStore({
         fields: ['value'],
         data: [
+               [ '2016'],
                [ '2015'],
                [ '2014'],
                [ '2013'],
