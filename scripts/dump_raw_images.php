@@ -16,15 +16,17 @@
 // 2012_list.php) and change the database table to the correct one for the current year.  The table
 // may need to be copied from the default "images" first.
 
-$options = array("h"  => "help",
-                 // Casc member id
-                 "m:" => 'member-id:',
-                 // Image id
-                 "i:" => 'image-id:',
-                 // Optional image directory
-                 "d:" => 'image-dir:',
-                 // Optional year
-                 "y:" => 'year:');
+$options = array(
+    'h'  => "help",
+    // Casc member id
+    'm:' => 'member-id:',
+    // Image id
+    'i:' => 'image-id:',
+    // Optional image directory
+    'd:' => 'image-dir:',
+    // Optional year
+    'y:' => 'year:'
+);
 
 // Image to dump
 $imageId = null;
@@ -45,37 +47,37 @@ $args = getopt(implode("", array_keys($options)), $options);
 
 foreach ( $args as $arg => $value )
 {
-  switch ($arg)
-  {
-  case 'i':
-  case 'image-id':
-    $imageId = trim($value);
-    $single_image = true;
-    break;
+    switch ($arg)
+    {
+        case 'i':
+        case 'image-id':
+            $imageId = trim($value);
+            $single_image = true;
+            break;
 
-  case 'd':
-  case 'image-dir':
-    $imageDir = trim($value);
-    break;
+        case 'd':
+        case 'image-dir':
+            $imageDir = trim($value);
+            break;
 
-  case 'y':
-  case 'year':
-    $year = trim($value);
-    break;
+        case 'y':
+        case 'year':
+            $year = trim($value);
+            break;
 
-  case 'm':
-  case 'member-id':
-    $memberId = trim($value);
-    break;
+        case 'm':
+        case 'member-id':
+            $memberId = trim($value);
+            break;
 
-  case 'h':
-  case 'help':
-    usage_and_exit();
-    break;
+        case 'h':
+        case 'help':
+            usage_and_exit();
+            break;
 
-  default:
-    break;
-  }
+        default:
+            break;
+    }
 }  // foreach ( $args as $arg => $value )
 
 // Create image directories if they don't already exist
@@ -85,10 +87,18 @@ $thumbImageDir = $imageDir . "/180x";
 $fullImageDir = $imageDir . "/600x";
 $tableName = ( null !== $year ? $year . "_" : "" ) . "images";
 
-if ( ! is_dir($imageDir) ) mkdir($imageDir, 0755);
-if ( ! is_dir($rawImageDir) ) mkdir($rawImageDir, 0755);
-if ( ! is_dir($thumbImageDir) ) mkdir($thumbImageDir, 0755);
-if ( ! is_dir($fullImageDir) ) mkdir($fullImageDir, 0755);
+if ( ! is_dir($imageDir) ) {
+    mkdir($imageDir, 0755);
+}
+if ( ! is_dir($rawImageDir) ) {
+    mkdir($rawImageDir, 0755);
+}
+if ( ! is_dir($thumbImageDir) ) {
+    mkdir($thumbImageDir, 0755);
+}
+if ( ! is_dir($fullImageDir) ) {
+    mkdir($fullImageDir, 0755);
+}
 
 print "Using image directory '$imageDir' (thumbnails in '$thumbImageDir', full images in '$fullImageDir')\n";
 print "Using database table '$tableName'\n";
@@ -106,12 +116,12 @@ $criteria = array();
 $parameters = array();
 
 if ( null !== $imageId ) {
-  $criteria[] = "image_id = ?";
-  $parameters[] = $imageId;
+    $criteria[] = "image_id = ?";
+    $parameters[] = $imageId;
 }
 if ( null !== $memberId ) {
-  $criteria[] = "memberId = ?";
-  $parameters[] = $memberId;
+    $criteria[] = "memberId = ?";
+    $parameters[] = $memberId;
 }
 
 $query = "
@@ -125,11 +135,11 @@ if ( 0 != count($criteria) ) {
 }
 
 try {
-  $sth = $dbh->prepare($query);
-  $sth->execute($parameters);
+    $sth = $dbh->prepare($query);
+    $sth->execute($parameters);
 } catch (PDOException $e) {
-  $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
-  exit($msg);
+    $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
+    exit($msg);
 }
 
 print "Processing " . $sth->rowCount() . " images\n";
@@ -141,24 +151,24 @@ $fileNameList = array();
 
 while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 {
-  $name = $row['image_id'] . "-" . $row['member_id'] . "-" . $row['uploaded'];
-  $ext = $row['image_ext']; 
-  $rawPath = "{$rawImageDir}/${name}.${ext}";
-  print "Save image from database: $rawPath\n";
+    $name = $row['image_id'] . "-" . $row['member_id'] . "-" . $row['uploaded'];
+    $ext = $row['image_ext'];
+    $rawPath = "{$rawImageDir}/${name}.${ext}";
+    print "Save image from database: $rawPath\n";
 
-  if ( false === file_put_contents($rawPath, $row['image']) ) {
-    $err = error_get_last();
-    print sprintf("  Error saving image '%s': %s", $name, $err['message']) . "\n";
-    continue;
-  }
+    if ( false === file_put_contents($rawPath, $row['image']) ) {
+        $err = error_get_last();
+        print sprintf("  Error saving image '%s': %s", $name, $err['message']) . "\n";
+        continue;
+    }
 
-  if ( false === @chmod($rawPath, 0644) ) {
-    $err = error_get_last();
-    print sprintf("  Error changing permissions on '%s': %s", $rawPath, $err['message']) . "\n";
-    continue;
-  }
+    if ( false === @chmod($rawPath, 0644) ) {
+        $err = error_get_last();
+        print sprintf("  Error changing permissions on '%s': %s", $rawPath, $err['message']) . "\n";
+        continue;
+    }
 
-  $fileNameList[] = array($name, $rawPath);
+    $fileNameList[] = array($name, $rawPath);
 
 }
 
@@ -169,20 +179,20 @@ $sth = null;
 $dbh = null;
 
 foreach ( $fileNameList as $imageInfo ) {
-  list($name, $rawPath) = $imageInfo;
-  $thumbnail = $thumbImageDir . "/${name}.png";
+    list($name, $rawPath) = $imageInfo;
+    $thumbnail = $thumbImageDir . "/${name}.png";
 
-  // Note the [0] notation for convert, this selects the first frame and is useful when
-  // someone uploads an animated gif.
+    // Note the [0] notation for convert, this selects the first frame and is useful when
+    // someone uploads an animated gif.
 
-  $exe = "convert -resize 180x180 {$rawPath}[0] $thumbnail && chmod 644 $thumbnail";
-  print "$name: $exe\n";
-  system($exe);
+    $exe = "convert -resize 180x180 {$rawPath}[0] $thumbnail && chmod 644 $thumbnail";
+    print "$name: $exe\n";
+    system($exe);
 
-  $full = $fullImageDir . "/${name}.png";
-  $exe = "convert -resize 600x {$rawPath}[0] $full && chmod 644 $full";
-  print "$name: $exe\n";
-  system($exe);
+    $full = $fullImageDir . "/${name}.png";
+    $exe = "convert -resize 600x {$rawPath}[0] $full && chmod 644 $full";
+    print "$name: $exe\n";
+    system($exe);
 }
 
 exit(0);
@@ -192,14 +202,14 @@ exit(0);
 
 function usage_and_exit($msg = NULL)
 {
-  if ( NULL !== $msg ) { fwrite(STDERR, "\n$msg\n\n"); }
+    if ( NULL !== $msg ) { fwrite(STDERR, "\n$msg\n\n"); }
 
-  $str = "Usage: " . $_SERVER['argv'][0] . " \\\n" .
-    "[-h | --help] Display this help \n" .
-    "[-i | --image-id] Database image identifier\n" .
-    "[-d | --image-dir] Base image directory (default: " . $GLOBALS['imageDir'] . ")\n" .
-    "[-y | --year] Optional year if not the current one\n" . 
-    "[-m | --member-id] CASC member institution id, if processing a single image\n";
-  fwrite(STDERR, $str);
-  exit(1);
+    $str = "Usage: " . $_SERVER['argv'][0] . " \\\n" .
+        "[-h | --help] Display this help \n" .
+        "[-i | --image-id] Database image identifier\n" .
+        "[-d | --image-dir] Base image directory (default: " . $GLOBALS['imageDir'] . ")\n" .
+        "[-y | --year] Optional year if not the current one\n" .
+        "[-m | --member-id] CASC member institution id, if processing a single image\n";
+    fwrite(STDERR, $str);
+    exit(1);
 }  // usage_and_exit()

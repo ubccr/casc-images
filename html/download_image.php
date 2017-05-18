@@ -15,4 +15,3 @@ $mimeType = (array_key_exists('mime', $imageInfo) && ! empty($imageInfo['mime'])
 header('Content-type: ' . $mimeType);
 header('Content-Disposition: attachment; filename="' . $name . '"');
 readfile($filename);
-

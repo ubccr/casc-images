@@ -1,8 +1,10 @@
 <?php
 /*
  * Note: The researcher_institution field was added in 2014
-*/
+ */
+
 $year = ( isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : 2011 );
+
 ?>
 <html>
 <head>
@@ -41,7 +43,7 @@ $year = ( isset($_GET['year']) && is_numeric($_GET['year']) ? $_GET['year'] : 20
 <p><a href="/">Back</a></p>
 
 <?php
-$config = parse_ini_file("../config/casc.ini", true);
+        $config = parse_ini_file("../config/casc.ini", true);
 $dbHost = $config['database']['host'];
 $dbName = $config['database']['name'];
 $dbUser = $config['database']['user'];
@@ -52,62 +54,66 @@ $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 $year = trim($dbh->quote($year), "'");
 
 $fields = array(
-  "i.image_id",
-  "m.name as member_name",
-  "m.organization as member_org",
-  "i.researcher_name",
-  "i.member_id",
-  "i.description",
-  "unix_timestamp(i.date_uploaded) uploaded",
-  "i.image_resolution",
-  "i.image_ext"
+    "i.image_id",
+    "m.name as member_name",
+    "m.organization as member_org",
+    "i.researcher_name",
+    "i.member_id",
+    "i.description",
+    "unix_timestamp(i.date_uploaded) uploaded",
+    "i.image_resolution",
+    "i.image_ext"
 );
 
 if ( $year >= 2014 ) {
-  $additionalFields = array(
-    "i.researcher_institution",
-    "i.viz_name",
-    "i.viz_institution",
-    "i.compute_name",
-    "i.compute_institution"
-  );
-  $fields = array_merge($fields, $additionalFields);
+    $additionalFields = array(
+        "i.researcher_institution",
+        "i.viz_name",
+        "i.viz_institution",
+        "i.compute_name",
+        "i.compute_institution"
+    );
+    $fields = array_merge($fields, $additionalFields);
 }
 
 $query = "select " . implode(", ", $fields) . "
 from {$year}_images i
-join {$year}_members m
-    on i.member_id = m.member_id
+join {$year}_members m on i.member_id = m.member_id
 order by i.date_uploaded asc
 ";
 
 try {
-  $sth = $dbh->prepare($query);
-  $sth->execute();
+    $sth = $dbh->prepare($query);
+    $sth->execute();
 } catch (PDOException $e) {
-  $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
-  exit("<pre>$msg</pre>");
+    $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
+    exit("<pre>$msg</pre>");
 }
 
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-    $imageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded'].'.png';
+    $imageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.png';
     $rawImageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.' . $row['image_ext'];
     $thumb = 'images/' . $year . '/180x/' . $imageName;
     $full = 'images/' . $year . '/600x/' . $imageName;
-    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/><a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Raw Image</a><br/>';
+    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>'
+        . $row['description'] . '<br/><br/>'
+        . '<a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Raw Image</a><br/>';
 
-    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc"><b>Image #' . $row['image_id'] . '<b> (' . $row['image_resolution'] . ')<br/><br/>Researcher: '.$row['researcher_name'] . ( $year >= 2014 ? '<br/>'.$row['researcher_institution'] : "" );
+    print '<div class="thumbnail">'
+        . '<a rel="lightbox[casc]" title="'. htmlentities($description) .'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
+    print '<p class="desc"><b>Image #' . $row['image_id'] . '<b> (' . $row['image_resolution'] . ')'
+        . '<br/><br/>Researcher: ' . $row['researcher_name'];
     if ( $year >= 2014 ) {
-      echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
-      echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";
+        print '<br/>' . $row['researcher_institution'];
+        print '<br/>Visualization: ' . $row['viz_name'] . '<br/>' . $row['viz_institution'];
+        print '<br/>Computation: ' . $row['compute_name'] . '<br/>' . $row['compute_institution'] . '<br/>';
     }
-    echo '</p>';
-    echo '<p class="desc"><b>' . $row['member_name'] . '</b>';
+    print '</p>';
+    print '<p class="desc"><b>' . $row['member_name'] . '</b>';
     if ( ! empty($row['member_org']) ) {
-        echo ' (' . $row['member_org'] . ')';
+        print ' (' . $row['member_org'] . ')';
     }
-    echo '</div>';
+    print '</div>';
 }
 ?>
 

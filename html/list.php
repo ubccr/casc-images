@@ -1,4 +1,5 @@
 <?php
+// Set the current year
 $year = "2017";
 ?>
 <html>
@@ -13,7 +14,7 @@ $year = "2017";
         background-color: #eee;
         border: 1px solid #ccc;
         width: 250px;
-        height: 400px; 
+        height: 400px;
         float: left;
         margin-bottom: 10px;
         margin-right: 10px;
@@ -30,11 +31,6 @@ $year = "2017";
   <script type="text/javascript" src="js/lightbox/lightbox.js"></script>
 </head>
 <body>
-<!--
-    <div id="header">
-    <a href="http://www.casc.org/"><img id="main_header_img" src="http://www.casc.org/images/header_img_other.jpg" width="533" height="225"/></a><img id="page_header_img" src="http://www.casc.org/images/members_header.jpg" width="549" height="225"/>
-      </div>
--->
 <div id="outside-page">
   <div align="center" id="header"> <a href="http://www.casc.org/"><img src="images/logo.png"/></a></div>
 <br>
@@ -53,7 +49,7 @@ $dbh = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPasswd);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 $query = "
-select 
+select
     i.image_id,
     m.name as member_name,
     m.organization as member_org,
@@ -75,11 +71,11 @@ order by i.date_uploaded asc
 ";
 
 try {
-  $sth = $dbh->prepare($query);
-  $sth->execute();
+    $sth = $dbh->prepare($query);
+    $sth->execute();
 } catch (PDOException $e) {
-  $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
-  exit("<pre>$msg</pre>");
+    $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
+    exit("<pre>$msg</pre>");
 }
 
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -88,21 +84,25 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $rawImageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.' . $row['image_ext'];
     $thumb = "images/current/180x/$imageName";
     $full = "images/current/600x/$imageName";
-    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/><a href="download_image.php?year=current&name=' . $rawImageName . '">Download Raw Image</a><br/>';
+    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/>'
+        . '<a href="download_image.php?year=current&name=' . $rawImageName . '">Download Raw Image</a><br/>';
 
-    echo '<div class="thumbnail"><a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
-    echo '<p class="desc"><b>Image #' . $row['image_id'] . '</b> (' . $row['image_resolution'] . ')<br/>Researcher: '.$row['researcher_name'].'<br/>'.$row['researcher_institution'];
+    print '<div class="thumbnail">'
+        . '<a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
+    print '<p class="desc"><b>Image #' . $row['image_id'] . '</b> (' . $row['image_resolution'] . ')<br/>'
+        . 'Researcher: ' . $row['researcher_name'].'<br/>' . $row['researcher_institution'];
+
     if (null != $row['viz_name'] || null != $row['viz_institution']) {
-      echo '<br/>Visualization: '.$row['viz_name'].'<br/>'.$row['viz_institution'];
+        print '<br/>Visualization: ' . $row['viz_name'] . '<br/>' . $row['viz_institution'] . '<br/>';
     }
     if (null != $row['compute_name'] || null != $row['compute_institution']) {
-      echo '<br/>Computation: '.$row['compute_name'].'<br/>'.$row['compute_institution']."<br/>";
+        print '<br/>Computation: ' . $row['compute_name'] . '<br/>' . $row['compute_institution'] . '<br/>';
     }
-    echo '<p class="desc"><b>' . $row['member_name'] . '</b>';
+    print '<p class="desc"><b>' . $row['member_name'] . '</b>';
     if ( ! empty($row['member_org']) ) {
-        echo ' (' . $row['member_org'] . ')';
+        print ' (' . $row['member_org'] . ')';
     }
-    echo '</p></div>';
+    print '</p></div>';
 }
 ?>
 
