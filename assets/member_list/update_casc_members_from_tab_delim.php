@@ -74,6 +74,7 @@ $sql = "insert into members (name, organization, city, state) values (:name, :or
 $sth = $dbh->prepare($sql);
 
 if ( $truncateTable ) {
+  print "Truncating table\n";
   $sql = "TRUNCATE TABLE members";
   $dbh->query($sql);
 }
@@ -109,7 +110,8 @@ function usage_and_exit($msg = NULL)
   $str = "Usage: " . $_SERVER['argv'][0] . " \\\n" .
     "[-h | --help] Display this help \n" .
     "[-f | --file] Tab delimited member file\n" .
-    "[-s | --skip] Number of lines to skip (default " . $GLOBALS['skipLines'] . ")\n";
+    "[-s | --skip] Number of lines to skip (default " . $GLOBALS['skipLines'] . ")\n" .
+    "[-t | --truncate ] Truncate the members table before adding new members\n";
   fwrite(STDERR, $str);
   exit(1);
 }  // usage_and_exit()
