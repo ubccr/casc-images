@@ -88,16 +88,16 @@ $fullImageDir = $imageDir . "/600x";
 $tableName = ( null !== $year ? $year . "_" : "" ) . "images";
 
 if ( ! is_dir($imageDir) ) {
-    mkdir($imageDir, 0755);
+    mkdir($imageDir, 0775);
 }
 if ( ! is_dir($rawImageDir) ) {
-    mkdir($rawImageDir, 0755);
+    mkdir($rawImageDir, 0775);
 }
 if ( ! is_dir($thumbImageDir) ) {
-    mkdir($thumbImageDir, 0755);
+    mkdir($thumbImageDir, 0775);
 }
 if ( ! is_dir($fullImageDir) ) {
-    mkdir($fullImageDir, 0755);
+    mkdir($fullImageDir, 0775);
 }
 
 print "Using image directory '$imageDir' (thumbnails in '$thumbImageDir', full images in '$fullImageDir')\n";
@@ -162,7 +162,8 @@ while ($row = $sth->fetch(PDO::FETCH_ASSOC))
         continue;
     }
 
-    if ( false === @chmod($rawPath, 0644) ) {
+    // The dump directory should be owned by www-data:casc with permissions 0775 g+s
+    if ( false === @chmod($rawPath, 0664) ) {
         $err = error_get_last();
         print sprintf("  Error changing permissions on '%s': %s", $rawPath, $err['message']) . "\n";
         continue;
