@@ -84,11 +84,12 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $rawImageName = $row['image_id'] . '-' . $row['member_id'] . '-' . $row['uploaded']. '.' . $row['image_ext'];
     $thumb = "images/current/180x/$imageName";
     $full = "images/current/600x/$imageName";
-    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $row['description'] . '<br/><br/>'
+    $cleanedDescription = strtr($row['description'], array("\n" => "", "\r" => ""));
+    $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $cleanedDescription . '<br/><br/>'
         . '<a href="download_image.php?year=current&name=' . $rawImageName . '">Download Raw Image</a><br/>';
 
     print '<div class="thumbnail">'
-        . '<a rel="lightbox[casc]" title="'.htmlentities($description).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
+        . '<a rel="lightbox[casc]" title="'.htmlentities($description, ENT_COMPAT|ENT_HTML401|ENT_SUBSTITUTE).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
     print '<p class="desc"><b>Image #' . $row['image_id'] . '</b> (' . $row['image_resolution'] . ')<br/>'
         . 'Researcher: ' . $row['researcher_name'].'<br/>' . $row['researcher_institution'];
 
@@ -102,7 +103,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     if ( ! empty($row['member_org']) ) {
         print ' (' . $row['member_org'] . ')';
     }
-    print '</p></div>';
+    print '</p></div>' . PHP_EOL;
 }
 ?>
 
