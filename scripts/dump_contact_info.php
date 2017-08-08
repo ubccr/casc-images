@@ -1,8 +1,7 @@
 <?php
 
 // Dump a file containing image submitter contact information for specified image numbers.
-// Note that the image numbers should be stored in the database but they are currently not,
-// so there is a workaround in place.
+// Note that the image numbers are actually the image ids in the database.
 
 $options = array(
 	// Configuration file for database connection parameters
@@ -23,7 +22,7 @@ $optionValues = array(
 	'image-numbers' => array()
 );
 
-$args = getopt(implode("", array_keys($options)));  // , $options);
+$args = getopt(implode("", array_keys($options)), $options);
 foreach ( $args as $arg => $value ) {
 	switch ($arg) {
 		case 'c':
@@ -62,7 +61,7 @@ if ( ! is_file($optionValues['config-file']) ) {
 }
 
 if ( 0 == count($optionValues['image-numbers']) ) {
-	exit();
+	exit("Must provide at least one image number");
 }
 
 $config = parse_ini_file($optionValues['config-file'], true);
@@ -75,12 +74,13 @@ $dbh = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPasswd);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 $query = "
-select 
-    name, phone, email,
+SELECT 
+    image_id, name, phone, email,
     researcher_name, researcher_phone, researcher_email, researcher_institution,
     description
-from images
-";
+FROM images
+WHERE image_id IN (" . implode(",", $optionValues['image-numbers']) . ")
+ORDER BY image_id";
 
 try {
   $sth = $dbh->prepare($query);
@@ -104,13 +104,7 @@ fputcsv($outFd, array(
 	"description"
 ));
 
-$imageNumber = 0;
 while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
-  $imageNumber++;
-  if ( ! in_array($imageNumber, $optionValues['image-numbers']) ) {
-    continue;
-  }
-  array_unshift($row, $imageNumber);
   fputcsv($outFd, $row);
 }
 

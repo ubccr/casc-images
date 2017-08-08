@@ -38,7 +38,7 @@ $memberId = null;
 $year = null;
 
 // Base directory for exported images: must be writable by apache
-$imageDir = "./images";
+$imageDir = "./images/current";
 
 // By default, process entire year's images
 $single_image = false;
@@ -120,7 +120,7 @@ if ( null !== $imageId ) {
     $parameters[] = $imageId;
 }
 if ( null !== $memberId ) {
-    $criteria[] = "memberId = ?";
+    $criteria[] = "member_id = ?";
     $parameters[] = $memberId;
 }
 
