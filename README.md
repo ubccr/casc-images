@@ -66,7 +66,7 @@ the current year repository.
 	) ENGINE = MyISAM
 	AS SELECT * FROM `casc`.`members`;
 
-	TRUNACTE TABLE `casc`.`images`;
+	TRUNCATE TABLE `casc`.`images`;
 	
 (2) Copy images to an archive directory
 
@@ -86,10 +86,15 @@ the current year repository.
         ] 
      });
 
-(4) If necessary, update the member list in the database:
+(2) Update the current year:
+
+	// Set the current year
+	$year = "2018";
+
+(2) If necessary, update the member list in the database:
 
 	update_casc_members_from_tab_delim.php -f casc_members_20150511.tab
 
-(5) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
+(2) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
 
 	mysql -B -u casc -p -e "SELECT concat('[', member_id, ', ''', name, ', ', coalesce(organization, city),'''],')  FROM members;" casc

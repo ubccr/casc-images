@@ -98,7 +98,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $cleanedDescription = strtr($row['description'], array("\n" => "", "\r" => ""));
     $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>'
         . $cleanedDescription . '<br/><br/>'
-        . '<a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Raw Image</a><br/>';
+        . '<a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Raw Image</a><br/><br/>';
 
     print '<div class="thumbnail">'
         . '<a rel="lightbox[casc]" title="'. htmlentities($description, ENT_COMPAT|ENT_HTML401|ENT_SUBSTITUTE) .'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
