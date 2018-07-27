@@ -10,7 +10,7 @@ $mimeTypeToExtension = array(
   'image/x-eps' => 'eps'
 );
 
-// Update the image table to set the image resolution.
+// Update the image table to set the image extension based on the image on disk.
 
 $options = array("h"  => "help",
                  // Optional year
