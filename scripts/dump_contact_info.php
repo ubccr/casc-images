@@ -30,7 +30,7 @@ foreach ( $args as $arg => $value ) {
 			if ( ! is_file($value) ) {
 				usage_and_exit("Config file not found: '$value'");
 			}
-			$optionValues['config-file'];
+			$optionValues['config-file'] = $value;
 		break;
 
 		case 'n':
@@ -57,11 +57,11 @@ foreach ( $args as $arg => $value ) {
 // Verify arguments
 
 if ( ! is_file($optionValues['config-file']) ) {
-	usage_and_exit("Config file not found: '" . $optionValues['config-file'] ."'");
+	usage_and_exit("Config file not found: '" . $optionValues['config-file'] ."'\n");
 }
 
 if ( 0 == count($optionValues['image-numbers']) ) {
-	exit("Must provide at least one image number");
+	exit("Must provide at least one image number\n");
 }
 
 $config = parse_ini_file($optionValues['config-file'], true);
