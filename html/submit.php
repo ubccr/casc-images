@@ -144,7 +144,6 @@ try
     // Call the dump image script with the particulars to create the image files for display.
     $options="-i $imageId -d $imageDirectory";
     $command = "/usr/bin/php {$dumpScript} {$options} >> {$logFile} 2>&1 &";
-    exec("echo '$command' >/tmp/smg");
     exec($command);
 }
 catch ( PDOException $e )
