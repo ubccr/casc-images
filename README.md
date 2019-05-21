@@ -79,7 +79,7 @@ the current year repository.
 	chown -R casc:casc html/images/2015
 	chmod -R g+rX,o+rX html/images/2015
 	
-(2) Add the newly archived year to html/js/main.js
+(3) Add the newly archived year to html/js/main.js
 
     var casc_submissions_list = new Ext.data.ArrayStore({
         fields: ['value'],
@@ -92,12 +92,12 @@ the current year repository.
         ] 
      });
 
-(2) Update the current year in html/list.php:
+(4) Update the current year in html/list.php:
 
 	// Set the current year
 	$year = "2018";
 
-(2) If necessary, update the member list in the database in assets/member_list:
+(5) If necessary, update the member list in the database in assets/member_list:
 
 	php update_casc_members_from_tab_delim.php -f casc_members_20190521.tsv -s 1 -t
 
@@ -107,6 +107,6 @@ the current year repository.
 	[-s | --skip] Number of lines to skip (default 1)
 	[-t | --truncate ] Truncate the members table before adding new members
 
-(2) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
+(6) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
 
 	mysql -B -u casc -p -e "SELECT concat('[', member_id, ', ''', name, ', ', coalesce(organization, city),'''],')  FROM members;" casc
