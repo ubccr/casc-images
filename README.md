@@ -3,6 +3,9 @@ CASC Image Upload
 
 Operations described here assume the directory is the top level website directory (e.g., /var/www)
 
+Notes:
+- `html/imgaes` must be owned by www-data (webserver user) and writable by the application user (`chown -R www-data:casc html/images && chmod -R u+rwX,g+rwX,o+rX html/images`)
+
 Helper Scripts
 --------------
 
@@ -68,10 +71,13 @@ the current year repository.
 
 	TRUNCATE TABLE `casc`.`images`;
 	
-(2) Copy images to an archive directory
+(2) Copy images to an archive directory. This should be done as root since the web server user
+    will own some of the files/subdirectories.
 
 	mkdir html/images/2015
-	mv html/images/current/* html/images/2015
+	sudo mv html/images/current/* html/images/2015
+	chown -R casc:casc html/images/2015
+	chmod -R g+rX,o+rX html/images/2015
 	
 (2) Add the newly archived year to html/js/main.js
 
@@ -86,14 +92,20 @@ the current year repository.
         ] 
      });
 
-(2) Update the current year:
+(2) Update the current year in html/list.php:
 
 	// Set the current year
 	$year = "2018";
 
-(2) If necessary, update the member list in the database:
+(2) If necessary, update the member list in the database in assets/member_list:
 
-	update_casc_members_from_tab_delim.php -f casc_members_20150511.tab
+	php update_casc_members_from_tab_delim.php -f casc_members_20190521.tsv -s 1 -t
+
+	Usage: update_casc_members_from_tab_delim.php \
+	[-h | --help] Display this help
+	[-f | --file] Tab delimited member file
+	[-s | --skip] Number of lines to skip (default 1)
+	[-t | --truncate ] Truncate the members table before adding new members
 
 (2) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
 
