@@ -121,7 +121,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 </div>
 
 <div align="center" style="clear: both">
-<img src="/images/casc_footer.jpg">
+<img src="/images/ccr_logo.png">
 <div>
 </div>
 </body>
