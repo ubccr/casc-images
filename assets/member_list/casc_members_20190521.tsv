@@ -1,91 +1,92 @@
-name	organization	city	state
-Advanced Computing Center	Arizona State University	Tempe	Arizona
-Advanced Research Computing	University of Michigan	Ann Arbor	Michigan
-Advanced Research Computing	Virginia Tech University	Blacksburg	Virginia
-Advanced Research Computing Center (ARCC)	University of Wyoming	Laramie	Wyoming
-Alliance for Computational Science and Engineering	University of Virginia	Charlottesville	Virginia
-Arctic Region Supercomputing Center (ARSC)	University of Alaska Fairbanks	Fairbanks	Alaska
-Argonne National Laboratory - 	University of Chicago  	Chicago	Illinois
-Berkeley Research Computing	"University of California, Berkeley"	Berkeley	California
-Center for Advanced Computing	Cornell University	Ithaca	New York
-Center for Advanced Computing and Data Systems	University of Houston	Houston	Texas
-Center for Advanced Research Computing	University of New Mexico	Albuquerque	New Mexico
-Center for Computation & Technology (CCT)	Louisiana State University	Baton Rouge	Louisiana
-Center for Computation & Visualization	Brown University	Providence	Rhode Island
-Center for Computational Research	University at Buffalo	Buffalo	New York
-Center for Computational Science	Boston University	Boston	Massachusetts
-Center for Computational Sciences	University of Kentucky	Lexington	Kentucky
-Center for Computationally Assisted Science & Technology	North Dakota State University	Fargo	North Dakota
-Center for High Performance Computing	University of Utah	Salt Lake City	Utah
-Center for Research Computing	University of Notre Dame	Notre Dame	Indiana
-Center for Scientific Computation	Southern Methodist University	Dallas	Texas
-Center for Simulation & Modeling	University of Pittsburgh	Pittsburgh	Pennsylvania
-Computing and Information Technology (CCIT)	Clemson University	Clemson	South Carolina
-Core Facility in Advanced Research Computing	Case Western Reserve University	Cleveland	Ohio
-Discovery Informatics Institute RDI2	Rutgers University	Piscataway	New Jersey
-Georgia Advanced Computing Resource Center	University of Georgia	Athens	Georgia
-Georgia Institute of Technology		Atlanta	Georgia
-Harvard University		Boston	Massachusetts
-High Performance Computing Center	Michigan State University	East Lansing	Michigan
-High Performance Computing Center	Oklahoma State University	Stillwater	Oklahoma
-High Performance Computing Center	Texas Tech University	Lubbock	Texas
-High Performance Computing Center	University of Arkansas	Fayetville	Arkansas
-High Performance Computing Collaboratory (HPC2)	Mississippi State University	Mississippi State	Mississippi
-High Performance Computing Facility	City University of New York	Staten Island	New York
-Holland Computing Center	University of Nebraska	Omaha	Nebraska
-Icahn School of Medicine at Mt. Sinai	Mt Sinai Medical School	New York	New York
-Indiana University		Bloomington	Indiana
-Information Sciences Institute	University of Southern California	Marina del Rey	California
-Institute for Digital Research and Education	"University of California, Los Angeles"	Los Angeles	California
-Institute for Massively Parallel Applications	The George Washington University	Washington	DC
-Institute for Scientific Computation	Texas A&M University	College Station	Texas
-Johns Hopkins University		Baltimore	Maryland
-Ken Kennedy Institute for Information Technology (K2I)	Rice University	Houston	Texas
+organization	name	city	state
+University of Alabama, Birmingham	Research Computing Services	Birmingham	Alabama
+University of Alaska Fairbanks	Research Computing Systems	Fairbanks	Alaska
+Arizona State University	Research Computing	Tempe	Arizona
+University of Arizona	Research Computing	Tucson	Arizona
+University of Arkansas	High Performance Computing Center	Fayetteville	Arkansas
 Lawrence Berkeley National Laboratory		Berkeley	California
-Maui High Performance Computing Center	University of Hawaii	Honolulu	Hawaii
-Medical Center Information Technology	New York University Langone Medical Center	New York	New York
-Michigan Technical Institute		Houghton	Michigan
-Minnesota Supercomputing Institute	University of Minnesota	Minneapolis	Minnesota
-Montana State University		Bozeman	Montana
-National Center for Atmospheric Research (NCAR)		Boulder	Colorado
-National Center for Supercomputing Applications (NCSA)	University of Illinois at Urbana-Champaign	Champaign	Illinois
-National Institute for Computational Sciences (NICS)	University of Tennessee	Knoxville	Tennessee
-National Supercomputing Center for Energy & the Environment (NSCEE)	University of Nevada	Las Vegas	Nevada
-New York University		New York	New York
-Northwestern University		Evanston	Illinois
-Oak Ridge National Laboratory (ORNL) Center for Computational Sciences		Oak Ridge	Tennessee
-Ohio Supercomputer Center (OSC)	The Ohio State University	Columbus	Ohio
-Old Dominion University		Norfolk	Virginia
-Pittsburgh Supercomputing Center	Carnegie-Mellon University & University of Pittsburgh	Pittsburgh	Pennsylvania
-Princeton University		Princeton	New Jersey
-Purdue University		West Lafayette	Indiana
-Renaissance Computing Institute (RENCI)	University of North Carolina at Chapel Hill	Chapel Hill	North Carolina
-Research Computing Center	Columbia University	New York	New York
-Research Computing Center	University of Arizona	Tucson	Arizona
-Research Computing Center	"University of Illinois, Chicago"	Chicago	Illinois
-Research Computing Center	University of New Hampshire	Durham	New Hampshire
-Research Cyberinfrastructure Center	"University of California, Irvine"	Irvine	California
-Research Technologies	Stony Brook University	Stony Brook	New York
-Roswell Park Research Computing Center	Roswell Park Comprehensive Cancer Center	Buffalo	New York
-San Diego Supercomputer Center (SDSC)	"University of California, San Diego"	La Jolla	California
-Scientific Computation Research Center (SCOREC)	Rensselaer Polytechnic Institute	Troy	New York
-Shared Research Computing Center	Florida State University	Tallahassee	Florida
+University of California, Berkeley	Berkeley Research Computing	Berkeley	California
+University of California, Irvine	Research Cyberinfrastructure Center	Irvine	California
+University of California, Los Angeles	Institute for Digital Research and Education	Los Angeles	California
+University of Southern California	Information Sciences Institute	Marina del Rey	California
+University of California, San Diego	San Diego Supercomputer Center (SDSC)	San Diego	California
 Stanford University		Stanford	California
-Supercomputing Center for Education and Research	University of Oklahoma	Norman	Oklahoma
-Texas Advanced Computing Center (TACC)	The University of Texas at Austin	Austin	Texas
-The Pennsylvania State University		University Park	Pennsylvania
-The University of Alabama at Birmingham		Birmingham	Alabama
+National Center for Atmospheric Research (NCAR)		Boulder	Colorado
 University of Colorado Boulder		Boulder	Colorado
-University of Connecticut		Storrs	Connecticut
+Yale University	Yale Center for Research Computing (YCRC)	New Haven	Connecticut
+University of Connecticut	Booth Engineering Center for Advanced Technology (BECAT)	Storrs	Connecticut
+Georgetown University	Research Technologies	Washington	DC
+The George Washington University		Washington	DC
 University of Florida		Gainesville	Florida
+University of South Florida	Research Computing	Tampa	Florida
+University of Georgia	Advanced Computing Resource Center (GACRC)	Athens	Georgia
+Georgia Institute of Technology		Atlanta	Georgia
+University of Illinois at Urbana-Champaign	National Center for Supercomputing Applications (NCSA)	Champaign	Illinois
+University of Chicago & Argonne National Laboratory	Research Computing Center	Chicago	Illinois
+Northwestern University		Evanston	Illinois
+Indiana University	Pervasive Technology Institute	Bloomington	Indiana
+University of Notre Dame	Center for Research Computing	Notre Dame	Indiana
+Purdue University		West Lafayette	Indiana
 University of Iowa		Iowa City	Iowa
+University of Kentucky	Center for Computational Sciences	Lexington	Kentucky
 University of Louisville		Louisville	Kentucky
-University of Maryland		College Park	Maryland
+Louisiana State University	Center for Computation & Technology (CCT)	Baton Rouge	Louisiana
+Johns Hopkins University		Baltimore	Maryland
+University of Maryland	Division of Information Technology	College Park	Maryland
+Boston University		Boston	Massachusetts
+Harvard University		Cambridge	Massachusetts
 University of Massachusetts		Shrewsbury	Massachusetts
-University of Miami		Miami	Florida
-"University of North Carolina, Chapel Hill"		Chapel Hill	North Carolina
+University of Michigan	Advanced Research Computing (ARC)	Ann Arbor	Michigan
+Michigan State University	High Performance Computing Center	East Lansing	Michigan
+Michigan Technological University		Houghton	Michigan
+University of Minnesota	Minnesota Supercomputing Institute for Advanced Computational Research	Minneapolis	Minnesota
+Mississippi State University	High Performance Computing Collaboratory (HPC2)	Starkville	Mississippi
+Montana State University	Information Technology Center	Bozeman	Montana
+University of Nebraska	Holland Computing Center	Omaha	Nebraska
+University of Nevada, Las Vegas	National Supercomputing Institute (NSI)	Las Vegas	Nevada
+University of Nevada, Reno	Research Computing	Reno	Nevada
+University of New Hampshire	Research Computing Center	Durham	New Hampshire
+Rutgers University		Piscataway	New Jersey
+Princeton University		Princeton	New Jersey
+University of New Mexico	Center for Advanced Research Computing	Albuquerque	New Mexico
+Roswell Park Comprehensive Cancer Center		Buffalo	New York
+University at Buffalo, State University of New York	Center for Computational Research	Buffalo	New York
+Cornell University	Center for Advanced Computing	Ithaca	New York
+Columbia University		New York	New York
+ICahn School of Medicine at Mount Sinai		New York	New York
+New York Genome Center		New York	New York
+New York University		New York	New York
+NYU Langone Medical Center		New York	New York
+City University of New York	High Performance Computing Center	Staten Island	New York
+Stony Brook University	Research Technologies	Stony Brook	New York
+Rensselaer Polytechnic Institute		Troy	New York
+University of North Carolina at Chapel Hill	Renaissance Computing Institute (RENCI)	Chapel Hill	North Carolina
+University of North Carolina at Chapel Hill		Chapel Hill	North Carolina
+North Dakota State University	Center for Computationally Assisted Science & Technology	Fargo	North Dakota
+Case Western Reserve University	Core Facillity Advanced Research Computing	Cleveland	Ohio
+The Ohio State University	Ohio Supercomputer Center (OSC)	Columbus	Ohio
+University of Oklahoma	Supercomputing Center for Education and Research	Norman	Oklahoma
+Oklahoma State University	High Performance Computing Center	Stillwater	Oklahoma
+University of Oregon	Research Advanced Computing Services (RACS)	Eugene	Oregon
+Carnegie-Mellon University & University of Pittsburgh	Pittsburgh Supercomputing Center	Pittsburgh	Pennsylvania
+University of Pittsburgh	Center for Research Computing	Pittsburgh	Pennsylvania
+The Pennsylvania State University		University Park	Pennsylvania
 University of Rhode Island		Kingston	Rhode Island
-University of South Florida		Tampa	Florida
-Vanderbilt University		Knoxville	Tennessee
+Brown University	Center for Computation and Visualization	Providence	Rhode Island
+Clemson University	Computing and Information Technology (CCIT)	Clemson	South Carolina
+University of Tennessee at Chattanooga	SimCenter	Chattanooga	Tennessee
+University of Tennessee	National Institute for Computational Sciences (NICS)	Knoxville	Tennessee
+Vanderbilt University	Advanced Computing Center for Research and Education	Nashville	Tennessee
+Oak Ridge National Laboratory (ORNL)	Center for Computational Sciences	Oak Ridge	Tennessee
+The University of Texas at Austin	Texas Advanced Computing Center (TACC)	Austin	Texas
+Texas A&M University	Institute for Scientific Computation	College Station	Texas
+Southern Methodist University	Center for Scientific Computation	Dallas	Texas
+Rice University	Ken Kennedy Institute for Information Technology (K2I)	Houston	Texas
+Texas Tech University	High Performance Computing Center	Lubbock	Texas
+University of Utah	Center for High Performance Computing	Salt Lake City	Utah
+Virginia Tech University	Advanced Research Computing 	Blacksburg	Virginia
+University of Virginia	Advanced Research Computing Services (ARCS)	Charlottesville	Virginia
+Old Dominion University		Norfolk	Virginia
+Washington University	Research Computing	Seattle	Washington
 West Virginia University		Morgantown	West Virginia
-Yale University		New Haven	Connecticut
+University of Wyoming	Advanced Research Computing Center (ARCC)	Laramie	Wyoming
