@@ -70,7 +70,7 @@ $dbPasswd = $config['database']['password'];
 $dbh = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPasswd);
 $dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-$sql = "insert into members (name, organization, city, state) values (:name, :organization, :city, :state)";
+$sql = "insert into members (organization, name, city, state) values (:organization, :name, :city, :state)";
 $sth = $dbh->prepare($sql);
 
 if ( $truncateTable ) {
@@ -82,13 +82,15 @@ if ( $truncateTable ) {
 foreach ( $lines as $line )
 {
 
-  list($name, $organization, $city, $state) = array_map("trim", explode("\t", $line));
-  print "Adding: $name, $organization, $city, $state\n";
+  list($organization, $name, $city, $state) = array_map("trim", explode("\t", $line));
+  print "Adding: $organization, $name, $city, $state\n";
   
-  $params = array(":name" => $name,
-		  ":organization" => ( "" == $organization ? NULL : $organization ),
-		  ":city" => $city,
-		  ":state" => $state);
+  $params = array(
+      ":organization" => $organization,
+      ":name" => ( "" == $name ? NULL : $name ),
+      ":city" => $city,
+      ":state" => $state
+  );
 
   try {
     $sth->execute($params);

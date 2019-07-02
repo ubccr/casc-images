@@ -61,8 +61,8 @@ the current year repository.
 
 	CREATE  TABLE  `casc`.`2015_members` (
 	  `member_id` int(11) NOT NULL AUTO_INCREMENT,
-	  `name` varchar(128) NOT NULL,
-	  `organization` varchar(128) DEFAULT NULL,
+	  `organization` varchar(128) NOT NULL,
+	  `name` varchar(128) DEFAULT NULL,
 	  `city` varchar(64) NOT NULL,
 	  `state` varchar(32) NOT NULL,
 	  PRIMARY KEY (`member_id`)
@@ -99,6 +99,9 @@ the current year repository.
 
 (5) If necessary, update the member list in the database in assets/member_list:
 
+**NOTE: The format of the member list changed in 2019. The organization is now the 1st column and
+required and the name is now the optional 2nd column.**
+
 	php update_casc_members_from_tab_delim.php -f casc_members_20190521.tsv -s 1 -t
 
 	Usage: update_casc_members_from_tab_delim.php \
@@ -106,7 +109,3 @@ the current year repository.
 	[-f | --file] Tab delimited member file
 	[-s | --skip] Number of lines to skip (default 1)
 	[-t | --truncate ] Truncate the members table before adding new members
-
-(6) Dump the member list from the database and update it in form.js. It is currently hardcoded in html/js/form.js.
-
-	mysql -B -u casc -p -e "SELECT concat('[', member_id, ', ''', name, ', ', coalesce(organization, city),'''],')  FROM members;" casc
