@@ -3,103 +3,23 @@ Ext.onReady(function(){
     Ext.QuickTips.init();
     Ext.form.Field.prototype.msgTarget = 'side';
 
-    // This member list needs to be manually dumped from the database. See readme.txt.
-
-    var casc_members = new Ext.data.ArrayStore({
-        idIndex: 0,
-        fields: ['id', 'value'],
-        data: [
-        [1, 'Advanced Computing Center, Arizona State University'],
-        [2, 'Advanced Research Computing, University of Michigan'],
-        [3, 'Advanced Research Computing, Virginia Tech University'],
-        [4, 'Advanced Research Computing Center (ARCC), University of Wyoming'],
-        [5, 'Alliance for Computational Science and Engineering, University of Virginia'],
-        [6, 'Arctic Region Supercomputing Center (ARSC), University of Alaska Fairbanks'],
-        [7, 'Argonne National Laboratory -, University of Chicago'],
-        [8, 'Berkeley Research Computing, "University of California, Berkeley"'],
-        [9, 'Center for Advanced Computing, Cornell University'],
-        [10, 'Center for Advanced Computing and Data Systems, University of Houston'],
-        [11, 'Center for Advanced Research Computing, University of New Mexico'],
-        [12, 'Center for Computation & Technology (CCT), Louisiana State University'],
-        [13, 'Center for Computation & Visualization, Brown University'],
-        [14, 'Center for Computational Research, University at Buffalo'],
-        [15, 'Center for Computational Science, Boston University'],
-        [16, 'Center for Computational Sciences, University of Kentucky'],
-        [17, 'Center for Computationally Assisted Science & Technology, North Dakota State University'],
-        [18, 'Center for High Performance Computing, University of Utah'],
-        [19, 'Center for Research Computing, University of Notre Dame'],
-        [20, 'Center for Scientific Computation, Southern Methodist University'],
-        [21, 'Center for Simulation & Modeling, University of Pittsburgh'],
-        [22, 'Computing and Information Technology (CCIT), Clemson University'],
-        [23, 'Core Facility in Advanced Research Computing, Case Western Reserve University'],
-        [24, 'Discovery Informatics Institute RDI2, Rutgers University'],
-        [25, 'Georgia Advanced Computing Resource Center, University of Georgia'],
-        [26, 'Georgia Institute of Technology, Atlanta'],
-        [27, 'Harvard University, Boston'],
-        [28, 'High Performance Computing Center, Michigan State University'],
-        [29, 'High Performance Computing Center, Oklahoma State University'],
-        [30, 'High Performance Computing Center, Texas Tech University'],
-        [31, 'High Performance Computing Center, University of Arkansas'],
-        [32, 'High Performance Computing Collaboratory (HPC2), Mississippi State University'],
-        [33, 'High Performance Computing Facility, City University of New York'],
-        [34, 'Holland Computing Center, University of Nebraska'],
-        [35, 'Icahn School of Medicine at Mt. Sinai, Mt Sinai Medical School'],
-        [36, 'Indiana University, Bloomington'],
-        [37, 'Information Sciences Institute, University of Southern California'],
-        [38, 'Institute for Digital Research and Education, "University of California, Los Angeles"'],
-        [39, 'Institute for Massively Parallel Applications, The George Washington University'],
-        [40, 'Institute for Scientific Computation, Texas A&M University'],
-        [41, 'Johns Hopkins University, Baltimore'],
-        [42, 'Ken Kennedy Institute for Information Technology (K2I), Rice University'],
-        [43, 'Lawrence Berkeley National Laboratory, Berkeley'],
-        [44, 'Maui High Performance Computing Center, University of Hawaii'],
-        [45, 'Medical Center Information Technology, New York University Langone Medical Center'],
-        [46, 'Michigan Technical Institute, Houghton'],
-        [47, 'Minnesota Supercomputing Institute, University of Minnesota'],
-        [48, 'Montana State University, Bozeman'],
-        [49, 'National Center for Atmospheric Research (NCAR), Boulder'],
-        [50, 'National Center for Supercomputing Applications (NCSA), University of Illinois at Urbana-Champaign'],
-        [51, 'National Institute for Computational Sciences (NICS), University of Tennessee'],
-        [52, 'National Supercomputing Center for Energy & the Environment (NSCEE), University of Nevada'],
-        [53, 'New York University, New York'],
-        [54, 'Northwestern University, Evanston'],
-        [55, 'Oak Ridge National Laboratory (ORNL) Center for Computational Sciences, Oak Ridge'],
-        [56, 'Ohio Supercomputer Center (OSC), The Ohio State University'],
-        [57, 'Old Dominion University, Norfolk'],
-        [58, 'Pittsburgh Supercomputing Center, Carnegie-Mellon University & University of Pittsburgh'],
-        [59, 'Princeton University, Princeton'],
-        [60, 'Purdue University, West Lafayette'],
-        [61, 'Renaissance Computing Institute (RENCI), University of North Carolina at Chapel Hill'],
-        [62, 'Research Computing Center, Columbia University'],
-        [63, 'Research Computing Center, University of Arizona'],
-        [64, 'Research Computing Center, "University of Illinois, Chicago"'],
-        [65, 'Research Computing Center, University of New Hampshire'],
-        [66, 'Research Cyberinfrastructure Center, "University of California, Irvine"'],
-        [67, 'Research Technologies, Stony Brook University'],
-        [68, 'Roswell Park Research Computing Center, Roswell Park Comprehensive Cancer Center'],
-        [69, 'San Diego Supercomputer Center (SDSC), "University of California, San Diego"'],
-        [70, 'Scientific Computation Research Center (SCOREC), Rensselaer Polytechnic Institute'],
-        [71, 'Shared Research Computing Center, Florida State University'],
-        [72, 'Stanford University, Stanford'],
-        [73, 'Supercomputing Center for Education and Research, University of Oklahoma'],
-        [74, 'Texas Advanced Computing Center (TACC), The University of Texas at Austin'],
-        [75, 'The Pennsylvania State University, University Park'],
-        [76, 'The University of Alabama at Birmingham, Birmingham'],
-        [77, 'University of Colorado Boulder, Boulder'],
-        [78, 'University of Connecticut, Storrs'],
-        [79, 'University of Florida, Gainesville'],
-        [80, 'University of Iowa, Iowa City'],
-        [81, 'University of Louisville, Louisville'],
-        [82, 'University of Maryland, College Park'],
-        [83, 'University of Massachusetts, Shrewsbury'],
-        [84, 'University of Miami, Miami'],
-        [85, '"University of North Carolina, Chapel Hill", Chapel Hill'],
-        [86, 'University of Rhode Island, Kingston'],
-        [87, 'University of South Florida, Tampa'],
-        [88, 'Vanderbilt University, Knoxville'],
-        [89, 'West Virginia University, Morgantown'],
-        [90, 'Yale University, New Haven']
-        ]
+    var casc_members = new Ext.data.JsonStore({
+        idProperty: 'id',
+        fields: ['id', 'name', 'organization', 'display'],
+        url: '/memberlist.php',
+        root: 'data',
+        listeners: {
+            load: function(store, recordList, opt) {
+                // Format the display so that we show the organization first and the optional name second.
+                for ( i = 0; i < recordList.length; i++ ) {
+                    var display = recordList[i].data.organization;
+                    if ( null != recordList[i].data.name ) {
+                        display += ', ' + recordList[i].data.name;
+                    }
+                    recordList[i].set('display', display);
+                }
+            }
+        }
     });
 
     var formPanel = new Ext.form.FormPanel({
@@ -145,12 +65,12 @@ Ext.onReady(function(){
                 forceSelection: true,
                 allowBlank: false,
                 //editable: false,
-		typeAhead:true, // allow user to filter by typing beginning of name
+                typeAhead:true, // allow user to filter by typing beginning of name
                 name: 'casc_member',
                 hiddenName: 'casc_member_id',
                 valueField: 'id',
-                displayField: 'value',
-                mode: 'local',
+                displayField: 'display',
+                mode: 'remote',
                 store: casc_members
             }]
         },{

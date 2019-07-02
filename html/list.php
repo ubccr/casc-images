@@ -74,8 +74,7 @@ try {
     $sth = $dbh->prepare($query);
     $sth->execute();
 } catch (PDOException $e) {
-    $msg = "Query error in {$e->getFile()}:{$e->getLine()} {$e->getMessage()}";
-    exit("<pre>$msg</pre>");
+    exit(sprintf("<pre>Query error in %s:$d %s</pre>", $e->getFile(), $e->getLine(), $e->getMessage()));
 }
 
 while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
@@ -87,6 +86,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $cleanedDescription = strtr($row['description'], array("\n" => "", "\r" => ""));
     $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>' . $cleanedDescription . '<br/><br/>'
         . '<a href="download_image.php?year=current&name=' . $rawImageName . '">Download Full Resolution Image</a><br/><br/>';
+    $displayOrg = $row['member_org'] . ( ! empty($row['member_name']) ? ", " . $row['member_name'] : "" ); 
 
     print '<div class="thumbnail">'
         . '<a rel="lightbox[casc]" title="'.htmlentities($description, ENT_COMPAT|ENT_HTML401|ENT_SUBSTITUTE).'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
@@ -99,10 +99,8 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     if (null != $row['compute_name'] || null != $row['compute_institution']) {
         print '<br/>Computation: ' . $row['compute_name'] . '<br/>' . $row['compute_institution'] . '<br/>';
     }
-    print '<p class="desc"><b>' . $row['member_name'] . '</b>';
-    if ( ! empty($row['member_org']) ) {
-        print ' (' . $row['member_org'] . ')';
-    }
+
+    print '<p class="desc"><b>' . $displayOrg . '</b>';
     print '</p></div>' . PHP_EOL;
 }
 ?>

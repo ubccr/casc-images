@@ -99,6 +99,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
     $description = '<b>Image #' . $row['image_id'] . '</b><br/><br/>'
         . $cleanedDescription . '<br/><br/>'
         . '<a href="download_image.php?year=' . $year . '&name=' . $rawImageName . '">Download Full Resolution Image</a><br/><br/>';
+    $displayOrg = $row['member_org'] . ( ! empty($row['member_name']) ? ", " . $row['member_name'] : "" );
 
     print '<div class="thumbnail">'
         . '<a rel="lightbox[casc]" title="'. htmlentities($description, ENT_COMPAT|ENT_HTML401|ENT_SUBSTITUTE) .'" href="'.$full.'"><img src="'.$thumb.'"/></a>';
@@ -110,10 +111,7 @@ while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         print '<br/>Computation: ' . $row['compute_name'] . '<br/>' . $row['compute_institution'] . '<br/>';
     }
     print '</p>';
-    print '<p class="desc"><b>' . $row['member_name'] . '</b>';
-    if ( ! empty($row['member_org']) ) {
-        print ' (' . $row['member_org'] . ')';
-    }
+    print '<p class="desc"><b>' . $displayOrg . '</b>';
     print '</div>';
 }
 ?>
